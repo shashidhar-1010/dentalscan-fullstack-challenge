@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Scan {
+  id            String         @id @default(cuid())
+  status        String         @default("pending")
+  images        String         @default("")
+  notifications Notification[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Notification {
+  id             String   @id @default(cuid())
+  scanId         String?
+  userId         String
+  title          String
+  message        String
+  read           Boolean  @default(false)
+  deliveryStatus String   @default("queued")
+  createdAt      DateTime @default(now())
+  scan           Scan?    @relation(fields: [scanId], references: [id], onDelete: SetNull)
+
+  @@index([scanId])
+  @@index([userId, read])
+}
+
+model Thread {
+  id        String    @id @default(cuid())
+  patientId String
+  dentistId String    @default("demo-clinic")
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([patientId, dentistId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  threadId  String
+  content   String
+  sender    String
+  createdAt DateTime @default(now())
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+}
