@@ -156,7 +156,3 @@ dentalscan-fullstack-challenge/
 * The structure follows the provided starter template
 * Enhancements were implemented without breaking base functionality
 
----
-
-```
-```
